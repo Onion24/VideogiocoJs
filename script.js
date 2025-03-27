@@ -1,10 +1,8 @@
-// Inizializza il contesto di gioco
+
 kaplay();
 
-// Imposta la gravità
 setGravity(1200);
 
-// Carica le risorse
 loadSprite("flappy", "https://play.kaplayjs.com/sprites/egg.png");
 loadSprite("flappy_perso", "https://play.kaplayjs.com/sprites/egg_crack.png");
 loadSprite("ostacolo", "https://play.kaplayjs.com/sprites/cloud.png");
@@ -17,10 +15,8 @@ add([
     fixed()              
 ]);
 
-// Aggiungi una variabile per tenere traccia se il gioco è finito
 let gameOver = false;
 
-// Aggiunge il giocatore
 const flappy = add([
     sprite("flappy"),
     pos(80, 100),
@@ -29,7 +25,6 @@ const flappy = add([
     scale(1),
 ]);
 
-// Controlli del giocatore
 onKeyPress("space", () => {
     if (!gameOver) {
         play("salto");
@@ -37,9 +32,8 @@ onKeyPress("space", () => {
     }
 });
 
-// Generazione degli ostacoli
 function spawnostacolo() {
-    if (gameOver) return; // Non generare ostacoli se il gioco è finito
+    if (gameOver) return;
 
     const y = rand(100, 300);
     add([
@@ -54,12 +48,9 @@ function spawnostacolo() {
 }
 spawnostacolo();
 
-// Gestione delle collisioni
 function showGameOver() {
-    // Cambia lo sprite di Flappy
     flappy.use(sprite("flappy_perso"));
 
-    // Aggiungi un overlay semitrasparente
     add([
         rect(width(), height()), // Rettangolo che copre tutto lo schermo
         pos(0, 0),
@@ -67,38 +58,31 @@ function showGameOver() {
         fixed(),
     ]);
 
-    // Mostra il testo di "Game Over"
     add([
         text("Game Over", { size: 40 }),
         pos(center().x, center().y),
-        anchor("center"), // Centra il testo rispetto alla posizione
+        anchor("center"), 
         fixed(),
     ]);
 
-    // Ferma gli ostacoli esistenti
     get("ostacolo").forEach((o) => {
-        o.unuse("move"); // Rimuove il comportamento di movimento
+        o.unuse("move"); 
     });
-
-    // Imposta il flag `gameOver` a true per fermare gli ostacoli e i controlli
     gameOver = true;
 
-    // Aspetta che l'utente prema un tasto per ricominciare
     onKeyPress(() => {
-        gameOver = false; // Resetta il flag
-        go("game"); // Ricarica la scena del gioco
+        gameOver = false; 
+        go("game");
     });
 }
 
-// Modifica la gestione delle collisioni per usare il nuovo Game Over
 flappy.onCollide("ostacolo", () => {
     if (!gameOver) {
         flappy.use(sprite("flappy_perso")); // Cambia sprite
-        wait(0.1, () => showGameOver()); // Mostra il Game Over dopo 0.3 secondi
+        wait(0.1, () => showGameOver());
     }
 });
 
-// Avvia il gioco
 scene("game", () => {
     go("game");
 });
